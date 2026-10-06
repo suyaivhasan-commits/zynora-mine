@@ -1,1 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0,
+      maximum-scale=1.0,user-scalable=no">
 
+<title>MRG Mining</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#070b13;
+    color:#fff;
+    min-height:100vh;
+}
+
+button{
+    font-family:inherit;
+}
+
+.app{
+    width:100%;
+    max-width:760px;
+    min-height:100vh;
+    margin:auto;
+    position:relative;
+    overflow:hidden;
+
+    background:
+      linear-gradient(rgba(100,110,120,.07) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(100,110,120,.07) 1px,transparent 1px),
+      #090d15;
+
+    background-size:48px 48px;
+    padding-bottom:90px;
+}
+
+/* ---------- TOP BAR ---------- */
+
+.topbar{
+    height:90px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+}
+
+.topbar h1{
+    font-size:27px;
+    font-weight:800;
+}
+
+.close{
+    position:absolute;
+    left:18px;
+    top:25px;
+    background:#090d14;
+    border:0;
+    color:white;
+    padding:10px 16px;
+    border-radius:25px;
+    font-size:16px;
+}
+
+.close span{
+    font-size:28px;
+    vertical-align:middle;
+    margin-right:5px;
+}
+
+.menu{
+    position:absolute;
+    right:15px;
+    top:24px;
+    background:#090d14;
+    border:0;
+    color:white;
+    width:55px;
+    height:55px;
+    border-radius:30px;
+    font-size:28px;
+}
+
+/* ---------- CONTENT ---------- */
+
+.content{
+    padding:0 26px;
+}
+
+/* ---------- ASSET ---------- */
+
+.asset-card{
+    border:1px solid rgba(80,130,190,.25);
+    border-radius:40px 40px 25px 25px;
+    padding:18px 28px 25px;
+    background:rgba(10,18,32,.45);
+    position:relative;
+    overflow:hidden;
+}
+
+.asset-card:after{
+    content:"";
+    position:absolute;
+    width:250px;
+    height:250px;
+    right:-100px;
+    top:-80px;
+    border-radius:50%;
+    background:rgba(0,115,255,.14);
+    filter:blur(10px);
+}
+
+.asset-title{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-size:18px;
+    font-weight:bold;
+    position:relative;
+    z-index:2;
+}
+
+.shield{
+    width:42px;
+    height:42px;
+    border-radius:12px;
+    background:#102e58;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:#42a5ff;
+    font-size:21px;
+}
+
+.total{
+    margin-left:auto;
+    font-size:16px;
+    color:#9da8bd;
+}
+
+.total b{
+    color:#d0ff25;
+    font-size:18px;
+}
+
+.asset-row{
+    display:flex;
+    gap:15px;
+    margin-top:20px;
+    position:relative;
+    z-index:2;
+}
+
+.asset-box{
+    flex:1;
+    min-height:74px;
+    background:#101b31;
+    border:1px solid rgba(75,120,200,.18);
+    border-radius:40px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 25px;
+    color:#8794ac;
+    font-size:18px;
+}
+
+.asset-box strong{
+    color:white;
+    font-size:20px;
+}
+
+/* ---------- MINER ---------- */
+
+.miner-card{
+    margin-top:25px;
+    min-height:810px;
+    border:1px solid rgba(80,130,190,.28);
+    border-radius:35px;
+    background:rgba(7,13,23,.52);
+    position:relative;
+    overflow:hidden;
+    text-align:center;
+    padding-top:38px;
+}
+
+.miner-card:before{
+    content:"";
+    position:absolute;
+    width:350px;
+    height:350px;
+    right:-100px;
+    top:-30px;
+    border-radius:50%;
+    background:rgba(0,100,255,.14);
+}
+
+.miner-card:after{
+    content:"";
+    position:absolute;
+    width:320px;
+    height:300px;
+    left:-130px;
+    bottom:-40px;
+    border-radius:50%;
+    background:rgba(110,160,0,.12);
+}
+
+.miner-title{
+    position:relative;
+    z-index:3;
+    font-size:25px;
+    font-weight:800;
+}
+
+.active{
+    display:inline-block;
+    margin-left:8px;
+    padding:10px 18px;
+    border-radius:25px;
+    background:#baff20;
+    color:#142000;
+    font-size:14px;
+    font-weight:bold;
+    box-shadow:0 0 20px rgba(186,255,32,.35);
+}
+
+.reward-label{
+    position:relative;
+    z-index:2;
+    margin-top:27px;
+    font-size:17px;
+    font-weight:bold;
+    color:#9eabc1;
+}
+
+.reward{
+    position:relative;
+    z-index:2;
+    margin-top:8px;
+    font-size:52px;
+    font-weight:900;
+    letter-spacing:-2px;
+}
+
+.reward span{
+    color:#c6f82c;
+    font-size:27px;
+    letter-spacing:0;
+}
+
+.speed{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    position:relative;
+    z-index:2;
+    margin-top:25px;
+    background:#0e1930;
+    border:1px solid rgba(80,130,210,.15);
+    padding:12px 24px;
+    border-radius:30px;
+    color:#9caac2;
+    font-size:17px;
+}
+
+.speed b{
+    color:white;
+}
+
+/* ---------- COIN ---------- */
+
+.coin-wrap{
+    position:relative;
+    z-index:3;
+    width:380px;
+    height:380px;
+    max-width:85vw;
+    max-height:85vw;
+    margin:40px auto 0;
+
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:
+      radial-gradient(circle,#ffe52c 0%,#ffb800 45%,#b76b00 70%,#241100 71%);
+    box-shadow:
+      0 0 0 7px #d89000,
+      0 0 0 11px #4c2800,
+      0 0 50px rgba(255,200,0,.28);
+}
+
+.coin{
+    width:88%;
+    height:88%;
+    border-radius:50%;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border:7px solid #ffd51a;
+
+    background:
+      radial-gradient(circle at 35% 30%,
+      #fff200,
+      #ffc400 45%,
+      #f08a00 100%);
+
+    box-shadow:
+      inset 0 0 20px rgba(255,255,255,.5),
+      inset 0 -20px 30px rgba(100,45,0,.25);
+}
+
+.logo{
+    font-size:105px;
+    filter:drop-shadow(0 4px 2px rgba(90,45,0,.3));
+}
+
+.mining-note{
+    position:relative;
+    z-index:3;
+    margin-top:28px;
+    color:#8d9ab0;
+    font-size:15px;
+}
+
+/* ---------- BUTTONS ---------- */
+
+.actions{
+    display:flex;
+    gap:18px;
+    margin-top:28px;
+    position:relative;
+    z-index:10;
+}
+
+.action-btn{
+    flex:1;
+    height:72px;
+    border:0;
+    border-radius:38px;
+    font-size:19px;
+    font-weight:900;
+    cursor:pointer;
+}
+
+.upgrade{
+    background:linear-gradient(#4295ff,#176de5);
+    color:white;
+    box-shadow:0 5px 20px rgba(20,110,240,.4);
+}
+
+.claim{
+    background:linear-gradient(#d1ff36,#b4ef16);
+    color:#172000;
+    box-shadow:0 5px 25px rgba(180,240,20,.35);
+}
+
+.action-btn:active{
+    transform:scale(.97);
+}
+
+/* ---------- BOTTOM NAV ---------- */
+
+.bottom-nav{
+    position:fixed;
+    bottom:0;
+    left:50%;
+    transform:translateX(-50%);
+    width:100%;
+    max-width:760px;
+    height:88px;
+
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+
+    background:rgba(12,24,46,.97);
+    border-top:1px solid rgba(100,140,200,.15);
+    z-index:100;
+}
+
+.nav-item{
+    width:20%;
+    height:80px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    gap:6px;
+    color:#8392ad;
+    font-size:13px;
+    font-weight:bold;
+    position:relative;
+    cursor:pointer;
+}
+
+.nav-icon{
+    font-size:29px;
+}
+
+.nav-item.active{
+    color:#c8ff2c;
+    background:none;
+    box-shadow:none;
+}
+
+.badge{
+    position:absolute;
+    top:8px;
+    right:27%;
+    width:25px;
+    height:25px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    background:#bfff24;
+    color:#1b2900;
+    font-size:13px;
+}
+
+/* ---------- POPUP ---------- */
+
+.popup{
+    position:fixed;
+    left:50%;
+    bottom:105px;
+    transform:translate(-50%,20px);
+    width:calc(100% - 50px);
+    max-width:600px;
+    background:#101a2c;
+    border:1px solid rgba(160,220,255,.2);
+    padding:18px 20px;
+    border-radius:18px;
+    text-align:center;
+    opacity:0;
+    pointer-events:none;
+    transition:.3s;
+    z-index:200;
+}
+
+.popup.show{
+    opacity:1;
+    transform:translate(-50%,0);
+}
+
+/* ---------- MOBILE ---------- */
+
+@media(max-width:520px){
+
+    .topbar{
+        height:80px;
+    }
+
+    .topbar h1{
+        font-size:24px;
+    }
+
+    .content{
+        padding:0 16px;
+    }
+
+    .asset-card{
+        padding:16px;
+        border-radius:30px;
+    }
+
+    .asset-row{
+        gap:8px;
+    }
+
+    .asset-box{
+        padding:0 14px;
+        font-size:14px;
+    }
+
+    .asset-box strong{
+        font-size:17px;
+    }
+
+    .total{
+        font-size:13px;
+    }
+
+    .miner-card{
+        min-height:700px;
+        padding-top:30px;
+    }
+
+    .miner-title{
+        font-size:21px;
+    }
+
+    .active{
+        padding:8px 12px;
+        font-size:12px;
+    }
+
+    .reward{
+        font-size:42px;
+    }
+
+    .reward span{
+        font-size:23px;
+    }
+
+    .coin-wrap{
+        width:300px;
+        height:300px;
+        margin-top:30px;
+    }
+
+    .logo{
+        font-size:75px;
+    }
+
+    .actions{
+        gap:10px;
+    }
+
+    .action-btn{
+        height:62px;
+        font-size:16px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- TOP -->
+
+    <div class="topbar">
+
+        <button class="close">
+            <span>×</span> Close
+        </button>
+
+        <h1>MRG Mining</h1>
+
+        <button class="menu">⋮</button>
+
+    </div>
+
+
+    <div class="content">
+
+        <!-- ASSET HOLDING -->
+
+        <div class="asset-card">
+
+            <div class="asset-title">
+
+                <div class="shield">♢</div>
+
+                <span>My Asset holding</span>
+
+                <div class="total">
+                    Total:
+                    <b id="totalBalance">131.900</b> MRG
+                </div>
+
+            </div>
+
+
+            <div class="asset-row">
+
+                <div class="asset-box">
+                    <span>In-App</span>
+                    <strong id="balance">131.9 MRG</strong>
+                </div>
+
+                <div class="asset-box">
+                    <span>▣ GRAM</span>
+                    <strong>0 MRG</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- MINER -->
+
+        <div class="miner-card">
+
+            <div class="miner-title">
+
+                Level 9 Miner
+
+                <span class="active">
+                    ACTIVE <span id="timer">23:57</span>
+                </span>
+
+            </div>
+
+
+            <div class="reward-label">
+                UNCLAIMED MINING REWARD
+            </div>
+
+
+            <div class="reward">
+
+                <span id="reward">
+                    0.019728
+                </span>
+
+                <span>MRG</span>
+
+            </div>
+
+
+            <div class="speed">
+                ◔ Speed:
+                <b>0.49 TH/s</b>
+            </div>
+
+
+            <!-- COIN -->
+
+            <div class="coin-wrap">
+
+                <div class="coin">
+
+                    <div class="logo">
+                        🐱
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="mining-note">
+                Claim within 24 hours to keep mining active.
+            </div>
+
+        </div>
+
+
+        <!-- ACTIONS -->
+
+        <div class="actions">
+
+            <button
+                class="action-btn upgrade"
+                onclick="upgradeMiner()">
+
+                UPGRADE →
+            </button>
+
+            <button
+                class="action-btn claim"
+                onclick="claimReward()">
+
+                CLAIM REWARD
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- BOTTOM NAV -->
+
+    <div class="bottom-nav">
+
+        <div class="nav-item">
+
+            <div class="nav-icon">▣</div>
+
+            <span>Tasks</span>
+
+            <div class="badge">1</div>
+
+        </div>
+
+
+        <div class="nav-item">
+
+            <div class="nav-icon">ϟ</div>
+
+            <span>Miners</span>
+
+        </div>
+
+
+        <div class="nav-item active">
+
+            <div class="nav-icon">⚒</div>
+
+            <span>Mine</span>
+
+        </div>
+
+
+        <div class="nav-item">
+
+            <div class="nav-icon">♧</div>
+
+            <span>Friends</span>
+
+        </div>
+
+
+        <div class="nav-item">
+
+            <div class="nav-icon">▱</div>
+
+            <span>Wallet</span>
+
+        </div>
+
+    </div>
+
+
+    <div class="popup" id="popup">
+        Reward claimed successfully!
+    </div>
+
+</div>
+
+
+<script>
+
+/* ================================
+   MINING VARIABLES
+================================ */
+
+let balance = 131.9;
+
+let reward = 0.019728;
+
+let miningSpeed = 0.00000125;
+
+
+/* ================================
+   LIVE MINING
+================================ */
+
+setInterval(function(){
+
+    reward += miningSpeed;
+
+    document.getElementById("reward")
+        .innerText = reward.toFixed(6);
+
+},1000);
+
+
+/* ================================
+   CLAIM REWARD
+================================ */
+
+function claimReward(){
+
+    if(reward <= 0){
+        showPopup("No reward available.");
+        return;
+    }
+
+    balance += reward;
+
+    reward = 0;
+
+    document.getElementById("balance")
+        .innerText = balance.toFixed(3) + " MRG";
+
+    document.getElementById("totalBalance")
+        .innerText = balance.toFixed(3);
+
+    document.getElementById("reward")
+        .innerText = "0.000000";
+
+    showPopup("Reward claimed successfully!");
+
+}
+
+
+/* ================================
+   UPGRADE
+================================ */
+
+function upgradeMiner(){
+
+    showPopup(
+        "Upgrade system will be available soon."
+    );
+
+}
+
+
+/* ================================
+   POPUP
+================================ */
+
+function showPopup(message){
+
+    const popup =
+        document.getElementById("popup");
+
+    popup.innerText = message;
+
+    popup.classList.add("show");
+
+    setTimeout(function(){
+
+        popup.classList.remove("show");
+
+    },2500);
+
+}
+
+
+/* ================================
+   24 HOUR TIMER
+================================ */
+
+let totalSeconds = (23 * 60) + 57;
+
+setInterval(function(){
+
+    if(totalSeconds <= 0){
+
+        totalSeconds = 24 * 60 * 60;
+
+    }
+
+    totalSeconds--;
+
+    let hours =
+        Math.floor(totalSeconds / 3600);
+
+    let minutes =
+        Math.floor((totalSeconds % 3600) / 60);
+
+    let seconds =
+        totalSeconds % 60;
+
+    document.getElementById("timer")
+        .innerText =
+        String(hours).padStart(2,'0')
+        + ":" +
+        String(minutes).padStart(2,'0');
+
+},1000);
+
+
+/* ================================
+   NAVIGATION
+================================ */
+
+document.querySelectorAll(".nav-item")
+.forEach(function(item){
+
+    item.addEventListener("click",function(){
+
+        document.querySelectorAll(".nav-item")
+        .forEach(function(nav){
+
+            nav.classList.remove("active");
+
+        });
+
+        this.classList.add("active");
+
+    });
+
+});
+
+</script>
+
+</body>
+</html>
